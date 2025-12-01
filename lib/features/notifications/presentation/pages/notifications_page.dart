@@ -8,6 +8,18 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if NotificationsBloc is available
+    try {
+      context.read<NotificationsBloc>();
+    } catch (e) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Notifications')),
+        body: const Center(
+          child: Text('Notifications require Firebase setup.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
@@ -27,7 +39,11 @@ class NotificationsPage extends StatelessWidget {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<NotificationsBloc>().add(const LoadNotifications());
+                      try {
+                        context.read<NotificationsBloc>().add(const LoadNotifications());
+                      } catch (e) {
+                        debugPrint('NotificationsBloc not available: $e');
+                      }
                     },
                     child: const Text('Retry'),
                   ),
@@ -83,16 +99,24 @@ class NotificationsPage extends StatelessWidget {
                       : IconButton(
                           icon: const Icon(Icons.check),
                           onPressed: () {
-                            context.read<NotificationsBloc>().add(
-                                  MarkAsRead(notification.id),
-                                );
+                            try {
+                              context.read<NotificationsBloc>().add(
+                                    MarkAsRead(notification.id),
+                                  );
+                            } catch (e) {
+                              debugPrint('NotificationsBloc not available: $e');
+                            }
                           },
                         ),
                   onTap: () {
                     if (!notification.isRead) {
-                      context.read<NotificationsBloc>().add(
-                            MarkAsRead(notification.id),
-                          );
+                      try {
+                        context.read<NotificationsBloc>().add(
+                              MarkAsRead(notification.id),
+                            );
+                      } catch (e) {
+                        debugPrint('NotificationsBloc not available: $e');
+                      }
                     }
                   },
                 );

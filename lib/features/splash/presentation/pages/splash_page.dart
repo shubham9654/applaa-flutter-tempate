@@ -40,11 +40,20 @@ class _SplashPageState extends State<SplashPage>
     await Future.delayed(const Duration(seconds: 3));
     if (!mounted) return;
 
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      context.go(AppConstants.homeRoute);
-    } else {
-      context.go(AppConstants.loginRoute);
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        context.go(AppConstants.homeRoute);
+      } else {
+        // Navigate to home page directly (works without Firebase)
+        context.go(AppConstants.homeRoute);
+      }
+    } catch (e) {
+      // If Firebase is not initialized, navigate to home
+      debugPrint('Firebase Auth error in splash: $e');
+      if (mounted) {
+        context.go(AppConstants.homeRoute);
+      }
     }
   }
 

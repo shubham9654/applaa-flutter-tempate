@@ -19,17 +19,22 @@ final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: AppConstants.splashRoute,
   redirect: (context, state) {
-    final user = FirebaseAuth.instance.currentUser;
-    final isAuthRoute = state.matchedLocation == AppConstants.loginRoute ||
-        state.matchedLocation == AppConstants.signupRoute ||
-        state.matchedLocation == AppConstants.splashRoute;
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final isAuthRoute = state.matchedLocation == AppConstants.loginRoute ||
+          state.matchedLocation == AppConstants.signupRoute ||
+          state.matchedLocation == AppConstants.splashRoute;
 
-    if (user == null && !isAuthRoute) {
-      return AppConstants.loginRoute;
-    }
-
-    if (user != null && isAuthRoute) {
-      return AppConstants.homeRoute;
+      // If user is signed in and tries to access auth pages, redirect to home
+      if (user != null && isAuthRoute) {
+        return AppConstants.homeRoute;
+      }
+      
+      // Allow all other navigation - guest users can access everything
+      // Individual pages will handle authentication requirements
+    } catch (e) {
+      // If Firebase is not initialized, allow navigation to proceed
+      debugPrint('Firebase Auth error in router: $e');
     }
 
     return null;

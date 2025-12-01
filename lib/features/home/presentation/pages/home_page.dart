@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/widgets/app_drawer.dart';
 
 class HomePage extends StatefulWidget {
   final Widget child;
@@ -19,19 +20,7 @@ class _HomePageState extends State<HomePage> {
       icon: Icons.dashboard_outlined,
       activeIcon: Icons.dashboard,
       label: 'Dashboard',
-      route: AppConstants.dashboardRoute,
-    ),
-    NavigationItem(
-      icon: Icons.person_outline,
-      activeIcon: Icons.person,
-      label: 'Profile',
-      route: AppConstants.profileRoute,
-    ),
-    NavigationItem(
-      icon: Icons.payment_outlined,
-      activeIcon: Icons.payment,
-      label: 'Payments',
-      route: AppConstants.paymentsRoute,
+      route: AppConstants.homeRoute,
     ),
     NavigationItem(
       icon: Icons.settings_outlined,
@@ -53,13 +42,22 @@ class _HomePageState extends State<HomePage> {
     // Determine current index based on route
     final currentRoute = GoRouterState.of(context).matchedLocation;
     final index = _navigationItems.indexWhere(
-      (item) => item.route == currentRoute,
+      (item) => item.route == currentRoute || 
+                (item.route == AppConstants.homeRoute && 
+                 (currentRoute == AppConstants.homeRoute || currentRoute == AppConstants.dashboardRoute)),
     );
     if (index != -1) {
-      _currentIndex = index;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _currentIndex != index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        }
+      });
     }
 
     return Scaffold(
+      drawer: const AppDrawer(),
       body: widget.child,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,

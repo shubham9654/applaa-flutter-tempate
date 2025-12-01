@@ -9,9 +9,23 @@ class AdMobService {
   bool _isInterstitialAdReady = false;
 
   Future<void> initialize() async {
-    await MobileAds.instance.initialize();
-    if (kDebugMode) {
-      debugPrint('AdMob initialized');
+    try {
+      // AdMob doesn't work on web
+      if (kIsWeb) {
+        if (kDebugMode) {
+          debugPrint('AdMob skipped on web platform');
+        }
+        return;
+      }
+      await MobileAds.instance.initialize();
+      if (kDebugMode) {
+        debugPrint('AdMob initialized');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('AdMob initialization failed: $e');
+      }
+      // Continue without AdMob
     }
   }
 

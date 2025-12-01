@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/config/app_config.dart';
+import '../../../../core/widgets/auth_required_widget.dart';
+import '../../../../core/widgets/setup_warning_widget.dart';
+import '../../../../core/utils/setup_checker.dart';
 import '../bloc/payments_bloc.dart';
 
 class PaymentsPage extends StatefulWidget {
@@ -45,15 +49,49 @@ class _PaymentsPageState extends State<PaymentsPage> {
               CreatePaymentIntent(amount, 'usd'),
             );
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Check if user is authenticated
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        // Show sign-in prompt for guest users
+        return const AuthRequiredWidget(
+          title: 'Sign In Required',
+          message: 'Please sign in to make payments and manage your payment methods.',
+          icon: Icons.payment_outlined,
+        );
+      }
+    } catch (e) {
+      // Firebase not initialized, show sign-in prompt
+      return const AuthRequiredWidget(
+        title: 'Sign In Required',
+        message: 'Please sign in to make payments and manage your payment methods.',
+        icon: Icons.payment_outlined,
+      );
+    }
+
+    // Check if PaymentsBloc is available
+    try {
+      context.read<PaymentsBloc>();
+    } catch (e) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Payments')),
+        body: const Center(
+          child: Text('Payments feature is not available.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Payments'),
@@ -68,7 +106,11 @@ class _PaymentsPageState extends State<PaymentsPage> {
                 content: Text('Payment successful: \$${state.payment.amount}'),
               ),
             );
-            context.read<PaymentsBloc>().add(const ResetPaymentState());
+            try {
+              context.read<PaymentsBloc>().add(const ResetPaymentState());
+            } catch (e) {
+              debugPrint('PaymentsBloc not available: $e');
+            }
             _amountController.clear();
           } else if (state is PaymentsError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -77,6 +119,9 @@ class _PaymentsPageState extends State<PaymentsPage> {
           }
         },
         builder: (context, state) {
+          // Check Stripe setup
+          final stripeSetup = SetupChecker.checkStripe();
+          
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Form(
@@ -84,6 +129,11 @@ class _PaymentsPageState extends State<PaymentsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Stripe setup warning
+                  if (stripeSetup.status != SetupStatus.configured)
+                    SetupWarningWidget(requirement: stripeSetup),
+                  if (stripeSetup.status != SetupStatus.configured)
+                    const SizedBox(height: 16),
                   Material(
                     child: Card(
                       child: Padding(

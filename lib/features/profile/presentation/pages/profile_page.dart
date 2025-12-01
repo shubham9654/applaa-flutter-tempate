@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/widgets/auth_required_widget.dart';
 import '../bloc/profile_bloc.dart';
 import '../../domain/entities/profile_entity.dart';
 
@@ -24,7 +25,16 @@ class _ProfilePageState extends State<ProfilePage> {
     _nameController = TextEditingController();
     _bioController = TextEditingController();
     _phoneController = TextEditingController();
-    context.read<ProfileBloc>().add(const LoadProfile());
+    // Load profile after first frame to ensure context has providers
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        try {
+          context.read<ProfileBloc>().add(const LoadProfile());
+        } catch (e) {
+          debugPrint('ProfileBloc not available: $e');
+        }
+      }
+    });
   }
 
   @override
@@ -46,18 +56,22 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void _saveProfile(String userId) {
     if (_formKey.currentState!.validate()) {
-      final profile = ProfileEntity(
-        id: userId,
-        email: FirebaseAuth.instance.currentUser?.email ?? '',
-        displayName: _nameController.text.trim(),
-        bio: _bioController.text.trim(),
-        phoneNumber: _phoneController.text.trim(),
-      );
+      try {
+        final profile = ProfileEntity(
+          id: userId,
+          email: FirebaseAuth.instance.currentUser?.email ?? '',
+          displayName: _nameController.text.trim(),
+          bio: _bioController.text.trim(),
+          phoneNumber: _phoneController.text.trim(),
+        );
 
-      context.read<ProfileBloc>().add(UpdateProfile(profile));
-      setState(() {
-        _isEditing = false;
-      });
+        context.read<ProfileBloc>().add(UpdateProfile(profile));
+        setState(() {
+          _isEditing = false;
+        });
+      } catch (e) {
+        debugPrint('ProfileBloc not available: $e');
+      }
     }
   }
 
@@ -65,11 +79,48 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _isEditing = false;
     });
-    context.read<ProfileBloc>().add(const LoadProfile());
+    try {
+      context.read<ProfileBloc>().add(const LoadProfile());
+    } catch (e) {
+      debugPrint('ProfileBloc not available: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // Check if user is authenticated
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        // Show sign-in prompt for guest users
+        return const AuthRequiredWidget(
+          title: 'Sign In Required',
+          message: 'Please sign in to access your profile and manage your account settings.',
+          icon: Icons.person_outline,
+        );
+      }
+    } catch (e) {
+      // Firebase not initialized, show sign-in prompt
+      return const AuthRequiredWidget(
+        title: 'Sign In Required',
+        message: 'Please sign in to access your profile and manage your account settings.',
+        icon: Icons.person_outline,
+      );
+    }
+
+    // Check if ProfileBloc is available
+    try {
+      context.read<ProfileBloc>();
+    } catch (e) {
+      // ProfileBloc not available, show message
+      return Scaffold(
+        appBar: AppBar(title: const Text('Profile')),
+        body: const Center(
+          child: Text('Profile features require Firebase authentication.'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
@@ -113,7 +164,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<ProfileBloc>().add(const LoadProfile());
+                      try {
+                        context.read<ProfileBloc>().add(const LoadProfile());
+                      } catch (e) {
+                        debugPrint('ProfileBloc not available: $e');
+                      }
                     },
                     child: const Text('Retry'),
                   ),

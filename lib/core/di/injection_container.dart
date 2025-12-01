@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../features/auth/data/datasources/auth_remote_datasource.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -39,55 +40,66 @@ Future<void> setupDependencyInjection() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
   
-  getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  getIt.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
-  getIt.registerLazySingleton<FirebaseMessaging>(() => FirebaseMessaging.instance);
+  try {
+    getIt.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
+    getIt.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+    getIt.registerLazySingleton<FirebaseMessaging>(() => FirebaseMessaging.instance);
+  } catch (e) {
+    debugPrint('Firebase services registration error: $e');
+    // Continue without Firebase services
+  }
   
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   getIt.registerLazySingleton<FlutterLocalNotificationsPlugin>(
     () => flutterLocalNotificationsPlugin,
   );
   
-  // Services
-  getIt.registerLazySingleton<NotificationService>(
-    () => NotificationService(
-      getIt<FlutterLocalNotificationsPlugin>(),
-      getIt<FirebaseMessaging>(),
-    ),
-  );
+  // Services - only register if Firebase is available
+  if (getIt.isRegistered<FirebaseMessaging>()) {
+    getIt.registerLazySingleton<NotificationService>(
+      () => NotificationService(
+        getIt<FlutterLocalNotificationsPlugin>(),
+        getIt<FirebaseMessaging>(),
+      ),
+    );
+  }
   
   getIt.registerLazySingleton<AdMobService>(
     () => AdMobService(),
   );
   
-  // Auth
-  getIt.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(
-      getIt<FirebaseAuth>(),
-      getIt<FirebaseFirestore>(),
-    ),
-  );
+  // Auth - only register if Firebase is available
+  if (getIt.isRegistered<FirebaseAuth>() && getIt.isRegistered<FirebaseFirestore>()) {
+    getIt.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(
+        getIt<FirebaseAuth>(),
+        getIt<FirebaseFirestore>(),
+      ),
+    );
+    
+    getIt.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()),
+    );
+    
+    getIt.registerFactory<AuthBloc>(
+      () => AuthBloc(getIt<AuthRepository>()),
+    );
+  }
   
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(getIt<AuthRemoteDataSource>()),
-  );
-  
-  getIt.registerFactory<AuthBloc>(
-    () => AuthBloc(getIt<AuthRepository>()),
-  );
-  
-  // Profile
-  getIt.registerLazySingleton<ProfileRemoteDataSource>(
-    () => ProfileRemoteDataSourceImpl(getIt<FirebaseFirestore>()),
-  );
-  
-  getIt.registerLazySingleton<ProfileRepository>(
-    () => ProfileRepositoryImpl(getIt<ProfileRemoteDataSource>()),
-  );
-  
-  getIt.registerFactory<ProfileBloc>(
-    () => ProfileBloc(getIt<ProfileRepository>()),
-  );
+  // Profile - only register if Firebase is available
+  if (getIt.isRegistered<FirebaseFirestore>()) {
+    getIt.registerLazySingleton<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(getIt<FirebaseFirestore>()),
+    );
+    
+    getIt.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(getIt<ProfileRemoteDataSource>()),
+    );
+    
+    getIt.registerFactory<ProfileBloc>(
+      () => ProfileBloc(getIt<ProfileRepository>()),
+    );
+  }
   
   // Settings
   getIt.registerLazySingleton<SettingsLocalDataSource>(
@@ -115,33 +127,37 @@ Future<void> setupDependencyInjection() async {
     () => PaymentsBloc(getIt<PaymentsRepository>()),
   );
   
-  // Dashboard
-  getIt.registerLazySingleton<DashboardRemoteDataSource>(
-    () => DashboardRemoteDataSourceImpl(getIt<FirebaseFirestore>()),
-  );
+  // Dashboard - only register if Firebase is available
+  if (getIt.isRegistered<FirebaseFirestore>()) {
+    getIt.registerLazySingleton<DashboardRemoteDataSource>(
+      () => DashboardRemoteDataSourceImpl(getIt<FirebaseFirestore>()),
+    );
+    
+    getIt.registerLazySingleton<DashboardRepository>(
+      () => DashboardRepositoryImpl(getIt<DashboardRemoteDataSource>()),
+    );
+    
+    getIt.registerFactory<DashboardBloc>(
+      () => DashboardBloc(getIt<DashboardRepository>()),
+    );
+  }
   
-  getIt.registerLazySingleton<DashboardRepository>(
-    () => DashboardRepositoryImpl(getIt<DashboardRemoteDataSource>()),
-  );
-  
-  getIt.registerFactory<DashboardBloc>(
-    () => DashboardBloc(getIt<DashboardRepository>()),
-  );
-  
-  // Notifications
+  // Notifications - only register if NotificationService is available
   getIt.registerLazySingleton<NotificationsLocalDataSource>(
     () => NotificationsLocalDataSourceImpl(getIt<SharedPreferences>()),
   );
   
-  getIt.registerLazySingleton<NotificationsRepository>(
-    () => NotificationsRepositoryImpl(
-      getIt<NotificationsLocalDataSource>(),
-      getIt<NotificationService>(),
-    ),
-  );
-  
-  getIt.registerFactory<NotificationsBloc>(
-    () => NotificationsBloc(getIt<NotificationsRepository>()),
-  );
+  if (getIt.isRegistered<NotificationService>()) {
+    getIt.registerLazySingleton<NotificationsRepository>(
+      () => NotificationsRepositoryImpl(
+        getIt<NotificationsLocalDataSource>(),
+        getIt<NotificationService>(),
+      ),
+    );
+    
+    getIt.registerFactory<NotificationsBloc>(
+      () => NotificationsBloc(getIt<NotificationsRepository>()),
+    );
+  }
 }
 
