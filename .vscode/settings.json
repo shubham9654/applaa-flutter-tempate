@@ -1,0 +1,12 @@
+{
+  // Java Language Server Configuration
+  // See JAVA_SETUP.md for detailed installation instructions
+  // 
+  // Uncomment and update the path below once you have JDK 17+ installed:
+  // "java.jdt.ls.java.home": "C:\\Program Files\\Java\\jdk-17"
+  //
+  // Common JDK locations:
+  // - C:\\Program Files\\Java\\jdk-17
+  // - C:\\Program Files\\Eclipse Adoptium\\jdk-17.0.x-hotspot
+  // - C:\\Program Files\\Android\\Android Studio\\jbr
+}
