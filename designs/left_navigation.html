@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Tailwind CDN Example</title>
+  </head>
+  <body>
+    <div
+      class="w-full h-full bg-gray-50 overflow-hidden relative font-sans text-gray-800"
+    >
+      <!-- Background Content (Simulated App View behind the drawer) -->
+      <div class="w-full h-full flex flex-col opacity-20 pointer-events-none">
+        <!-- Header -->
+        <div
+          class="px-6 py-5 flex justify-between items-center bg-white shadow-sm"
+        >
+          <i class="fa-solid fa-bars text-xl text-gray-600"></i>
+          <h1 class="text-lg font-bold tracking-tight">Dashboard</h1>
+          <div class="relative">
+            <i class="fa-regular fa-bell text-xl text-gray-600"></i>
+            <span
+              class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"
+            ></span>
+          </div>
+        </div>
+
+        <!-- Dummy Content -->
+        <div class="p-6 space-y-6 overflow-y-auto">
+          <!-- Card 1 -->
+          <div
+            class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <p
+                  class="text-gray-400 text-xs font-medium uppercase tracking-wider"
+                >
+                  Total Balance
+                </p>
+                <h2 class="text-3xl font-bold mt-1">$12,450.00</h2>
+              </div>
+              <div
+                class="w-10 h-10 rounded-full bg-[#6C5CE7]/10 flex items-center justify-center text-[#6C5CE7]"
+              >
+                <i class="fa-solid fa-wallet"></i>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <span
+                class="text-green-500 text-sm font-medium flex items-center gap-1"
+              >
+                <i class="fa-solid fa-arrow-trend-up"></i> +2.4%
+              </span>
+              <span class="text-gray-400 text-sm">vs last month</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div
+            class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 h-40"
+          ></div>
+          <div
+            class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 h-40"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Overlay (Darkens background) -->
+      <div
+        class="absolute inset-0 bg-gray-900/60 backdrop-blur-[2px] z-40 transition-opacity duration-300"
+      ></div>
+
+      <!-- Left Navigation Drawer -->
+      <div
+        class="absolute top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-white z-50 shadow-2xl flex flex-col transform transition-transform duration-300 ease-out rounded-r-3xl overflow-hidden"
+      >
+        <!-- Drawer Header: User Profile -->
+        <div class="relative bg-[#6C5CE7] p-6 pt-12 pb-8 text-white">
+          <!-- Decorative Circles -->
+          <div
+            class="absolute top-[-20%] right-[-10%] w-32 h-32 bg-white/10 rounded-full blur-xl"
+          ></div>
+          <div
+            class="absolute bottom-[-10%] left-[-10%] w-24 h-24 bg-white/10 rounded-full blur-lg"
+          ></div>
+
+          <div class="relative z-10 flex items-center gap-4">
+            <div class="relative">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80"
+                alt="Profile"
+                class="w-14 h-14 rounded-full object-cover border-2 border-white/30 shadow-md"
+              />
+              <div
+                class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-400 border-2 border-[#6C5CE7] rounded-full"
+              ></div>
+            </div>
+            <div>
+              <h2 class="text-lg font-bold leading-tight">Sarah Jenkins</h2>
+              <p class="text-white/80 text-sm">sarah.j@aura.ui</p>
+            </div>
+          </div>
+
+          <!-- Quick Stats in Header -->
+          <div class="flex mt-6 gap-6 relative z-10">
+            <div>
+              <p class="text-xl font-bold">24</p>
+              <p class="text-xs text-white/70 uppercase tracking-wide">
+                Projects
+              </p>
+            </div>
+            <div class="w-px bg-white/20 h-8 self-center"></div>
+            <div>
+              <p class="text-xl font-bold">1.2k</p>
+              <p class="text-xs text-white/70 uppercase tracking-wide">
+                Followers
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable Menu Items -->
+        <div class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+          <!-- Section Label -->
+          <p
+            class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            Main Menu
+          </p>
+
+          <!-- Active Item -->
+          <a
+            href="#"
+            class="flex items-center gap-4 px-4 py-3.5 bg-[#6C5CE7]/10 text-[#6C5CE7] rounded-xl transition-colors"
+          >
+            <i class="fa-solid fa-house w-5 text-center text-lg"></i>
+            <span class="font-semibold text-sm">Home</span>
+          </a>
+
+          <!-- Item -->
+          <a
+            href="#"
+            class="flex items-center justify-between px-4 py-3.5 text-gray-600 hover:bg-gray-50 hover:text-[#6C5CE7] rounded-xl transition-colors group"
+          >
+            <div class="flex items-center gap-4">
+              <i
+                class="fa-solid fa-chart-pie w-5 text-center text-lg text-gray-400 group-hover:text-[#6C5CE7] transition-colors"
+              ></i>
+              <span class="font-medium text-sm">Analytics</span>
+            </div>
+          </a>
+
+          <!-- Item with Badge -->
+          <a
+            href="#"
+            class="flex items-center justify-between px-4 py-3.5 text-gray-600 hover:bg-gray-50 hover:text-[#6C5CE7] rounded-xl transition-colors group"
+          >
+            <div class="flex items-center gap-4">
+              <i
+                class="fa-regular fa-comment-dots w-5 text-center text-lg text-gray-400 group-hover:text-[#6C5CE7] transition-colors"
+              ></i>
+              <span class="font-medium text-sm">Messages</span>
+            </div>
+            <span
+              class="bg-[#6C5CE7] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm shadow-[#6C5CE7]/30"
+              >5</span
+            >
+          </a>
+
+          <!-- Item -->
+          <a
+            href="#"
+            class="flex items-center justify-between px-4 py-3.5 text-gray-600 hover:bg-gray-50 hover:text-[#6C5CE7] rounded-xl transition-colors group"
+          >
+            <div class="flex items-center gap-4">
+              <i
+                class="fa-solid fa-wallet w-5 text-center text-lg text-gray-400 group-hover:text-[#6C5CE7] transition-colors"
+              ></i>
+              <span class="font-medium text-sm">Wallet</span>
+            </div>
+          </a>
+
+          <div class="my-2 border-t border-gray-100 mx-4"></div>
+
+          <!-- Section Label -->
+          <p
+            class="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+          >
+            Preferences
+          </p>
+
+          <!-- Item -->
+          <a
+            href="#"
+            class="flex items-center justify-between px-4 py-3.5 text-gray-600 hover:bg-gray-50 hover:text-[#6C5CE7] rounded-xl transition-colors group"
+          >
+            <div class="flex items-center gap-4">
+              <i
+                class="fa-solid fa-gear w-5 text-center text-lg text-gray-400 group-hover:text-[#6C5CE7] transition-colors"
+              ></i>
+              <span class="font-medium text-sm">Settings</span>
+            </div>
+          </a>
+
+          <!-- Toggle Item -->
+          <div
+            class="flex items-center justify-between px-4 py-3.5 text-gray-600 rounded-xl"
+          >
+            <div class="flex items-center gap-4">
+              <i
+                class="fa-solid fa-moon w-5 text-center text-lg text-gray-400"
+              ></i>
+              <span class="font-medium text-sm">Dark Mode</span>
+            </div>
+            <!-- Toggle Switch -->
+            <div
+              class="w-11 h-6 bg-gray-200 rounded-full relative cursor-pointer transition-colors"
+            >
+              <div
+                class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Drawer Footer -->
+        <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+          <!-- Upgrade Card -->
+          <div
+            class="bg-gradient-to-br from-[#6C5CE7] to-[#a29bfe] rounded-xl p-4 mb-4 text-white relative overflow-hidden shadow-lg shadow-[#6C5CE7]/20"
+          >
+            <div
+              class="absolute -right-4 -top-4 w-16 h-16 bg-white/20 rounded-full blur-lg"
+            ></div>
+            <div class="relative z-10">
+              <div class="flex items-center gap-2 mb-1">
+                <i class="fa-solid fa-crown text-yellow-300 text-sm"></i>
+                <h3 class="font-bold text-sm">Go Premium</h3>
+              </div>
+              <p class="text-[11px] text-white/90 mb-3">
+                Unlock all features and remove ads.
+              </p>
+              <button
+                class="w-full bg-white text-[#6C5CE7] text-xs font-bold py-2 rounded-lg shadow-sm"
+              >
+                Upgrade Now
+              </button>
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <button
+            class="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+          >
+            <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i>
+            <span class="font-medium text-sm">Log Out</span>
+          </button>
+
+          <p class="text-center text-[10px] text-gray-400 mt-2">
+            AuraUI Version 2.4.0
+          </p>
+        </div>
+           
+      </div>
+    </div>
+  </body>
+</html>

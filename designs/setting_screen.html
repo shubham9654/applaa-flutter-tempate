@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Tailwind CDN Example</title>
+
+  </head>
+  <body>
+      
+      
+      <div class="w-full h-full bg-gray-50 overflow-y-auto relative font-sans text-gray-800">
+    <!-- FontAwesome CDN for icons (Included for rendering purposes) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Header -->
+    <div class="sticky top-0 z-20 bg-gray-50/90 backdrop-blur-md px-6 pt-12 pb-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">Settings</h1>
+            <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-600 active:scale-95 transition-transform">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="px-6 pb-24">
+        <!-- Profile Card -->
+        <div class="flex items-center gap-4 mb-8">
+            <div class="relative">
+                <img src="https://i.pravatar.cc/150?img=32" alt="Profile" class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md">
+                <div class="absolute bottom-0 right-0 w-5 h-5 bg-[#6C5CE7] border-2 border-white rounded-full flex items-center justify-center">
+                    <i class="fa-solid fa-check text-[8px] text-white"></i>
+                </div>
+            </div>
+            <div class="flex-1">
+                <h2 class="text-xl font-bold text-gray-900">Jane Doe</h2>
+                <p class="text-sm text-gray-500">jane.doe@aura.ui</p>
+            </div>
+            <button class="text-[#6C5CE7] font-semibold text-sm">Edit</button>
+        </div>
+
+        <!-- Premium Banner -->
+        <div class="relative overflow-hidden bg-[#6C5CE7] rounded-2xl p-5 mb-8 shadow-lg shadow-[#6C5CE7]/30 text-white">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+            <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-black/10 rounded-full blur-xl"></div>
+            
+            <div class="relative z-10 flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-lg mb-1">AuraUI Premium</h3>
+                    <p class="text-white/80 text-xs">Unlock all features & remove ads.</p>
+                </div>
+                <button class="bg-white text-[#6C5CE7] px-4 py-2 rounded-lg text-xs font-bold shadow-sm active:scale-95 transition-transform">
+                    Upgrade
+                </button>
+            </div>
+        </div>
+
+        <!-- Section: Account -->
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Account</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <!-- Item -->
+                <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-[#6C5CE7]/10 flex items-center justify-center text-[#6C5CE7]">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                        <span class="font-medium text-sm">Personal Information</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                </button>
+                <!-- Item -->
+                <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-[#6C5CE7]/10 flex items-center justify-center text-[#6C5CE7]">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <span class="font-medium text-sm">Security & Login</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                </button>
+                <!-- Item -->
+                <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-[#6C5CE7]/10 flex items-center justify-center text-[#6C5CE7]">
+                            <i class="fa-regular fa-credit-card"></i>
+                        </div>
+                        <span class="font-medium text-sm">Payments & Billing</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Section: Preferences -->
+        <div class="mb-6">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Preferences</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <!-- Item with Toggle -->
+                <div class="w-full flex items-center justify-between p-4 border-b border-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center text-orange-500">
+                            <i class="fa-regular fa-bell"></i>
+                        </div>
+                        <span class="font-medium text-sm">Push Notifications</span>
+                    </div>
+                    <!-- Toggle Switch On -->
+                    <div class="w-11 h-6 bg-[#6C5CE7] rounded-full relative cursor-pointer transition-colors">
+                        <div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform"></div>
+                    </div>
+                </div>
+                
+                <!-- Item with Toggle -->
+                <div class="w-full flex items-center justify-between p-4 border-b border-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
+                            <i class="fa-regular fa-moon"></i>
+                        </div>
+                        <span class="font-medium text-sm">Dark Mode</span>
+                    </div>
+                    <!-- Toggle Switch Off -->
+                    <div class="w-11 h-6 bg-gray-200 rounded-full relative cursor-pointer transition-colors">
+                        <div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform"></div>
+                    </div>
+                </div>
+
+                <!-- Item -->
+                <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-500">
+                            <i class="fa-solid fa-globe"></i>
+                        </div>
+                        <span class="font-medium text-sm">Language</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-400">English (US)</span>
+                        <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Section: Support -->
+        <div class="mb-8">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 ml-1">Support</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors border-b border-gray-50">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                            <i class="fa-regular fa-circle-question"></i>
+                        </div>
+                        <span class="font-medium text-sm">Help Center</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                </button>
+                <button class="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-500">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <span class="font-medium text-sm">Terms & Privacy</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-300 text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Logout Button -->
+        <button class="w-full bg-white border border-red-100 text-red-500 font-semibold py-4 rounded-2xl shadow-sm mb-6 active:bg-red-50 transition-colors flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            Log Out
+        </button>
+
+    </div>
+</div>
+  </body>
+</html>
