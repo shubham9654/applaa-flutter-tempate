@@ -142,7 +142,7 @@ docker-compose down
 4. Set up a backend server to create payment intents (for security)
 5. Update `API_BASE_URL` in `.env` to point to your backend server
 
-**For detailed Stripe setup and troubleshooting, see [STRIPE.md](STRIPE.md)**
+**For detailed Stripe setup and troubleshooting, see [docs/STRIPE.md](docs/STRIPE.md)**
 
 ### 3. AdMob Setup
 
@@ -307,9 +307,11 @@ docker run -p 8080:80 applaa-flutter-app
 ├── .env                  # Your actual environment variables (not in git)
 ├── Dockerfile            # Docker build configuration (includes nginx config)
 ├── docker-compose.yml    # Docker Compose configuration
-├── STRIPE.md             # Stripe setup and troubleshooting guide
-├── FIREBASE_SETUP.md     # Firebase setup guide
-├── ADMOB_SETUP.md        # AdMob setup guide
+├── docs/                 # Documentation files
+│   ├── STRIPE.md         # Stripe setup and troubleshooting guide
+│   ├── FIREBASE_SETUP.md # Firebase setup guide
+│   ├── ADMOB_SETUP.md    # AdMob setup guide
+│   └── ...               # Other documentation
 ├── lib/                  # Flutter source code
 └── README.md             # This file
 ```

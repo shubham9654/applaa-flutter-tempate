@@ -45,14 +45,14 @@ class SetupChecker {
         name: 'Firebase',
         status: SetupStatus.configured,
         message: 'Firebase is configured and ready',
-        setupGuide: 'FIREBASE_SETUP.md',
+        setupGuide: 'docs/FIREBASE_SETUP.md',
       );
     } catch (e) {
       return SetupRequirement(
         name: 'Firebase',
         status: SetupStatus.notConfigured,
         message: 'Firebase is not configured. Required for authentication, profile, and notifications.',
-        setupGuide: 'FIREBASE_SETUP.md',
+        setupGuide: 'docs/FIREBASE_SETUP.md',
       );
     }
   }
@@ -72,7 +72,7 @@ class SetupChecker {
         name: 'Stripe',
         status: SetupStatus.notConfigured,
         message: 'Stripe keys are not configured. Required for payment processing.',
-        setupGuide: 'STRIPE.md',
+        setupGuide: 'docs/STRIPE.md',
       );
     }
 
@@ -81,7 +81,7 @@ class SetupChecker {
         name: 'Stripe',
         status: SetupStatus.configured,
         message: 'Stripe is configured (Test Mode). Update to production keys before deploying.',
-        setupGuide: 'STRIPE.md',
+        setupGuide: 'docs/STRIPE.md',
       );
     }
 
@@ -102,7 +102,7 @@ class SetupChecker {
         status: SetupStatus.platformNotSupported,
         message: 'AdMob is not supported on web platform. Available on Android and iOS only.',
         platform: 'Android, iOS',
-        setupGuide: 'ADMOB_SETUP.md',
+        setupGuide: 'docs/ADMOB_SETUP.md',
       );
     }
 
@@ -113,7 +113,7 @@ class SetupChecker {
         status: SetupStatus.notConfigured,
         message: 'AdMob service is not available. Required for displaying ads.',
         platform: 'Android, iOS',
-        setupGuide: 'ADMOB_SETUP.md',
+        setupGuide: 'docs/ADMOB_SETUP.md',
       );
     }
 
@@ -127,7 +127,7 @@ class SetupChecker {
         status: SetupStatus.configured,
         message: 'AdMob is configured (Test IDs). Update to production IDs before publishing.',
         platform: 'Android, iOS',
-        setupGuide: 'ADMOB_SETUP.md',
+        setupGuide: 'docs/ADMOB_SETUP.md',
       );
     }
 

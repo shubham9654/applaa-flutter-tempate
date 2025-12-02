@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'To sign in, you need to configure Firebase in your project. Please refer to FIREBASE_SETUP.md for detailed instructions.',
+                  'To sign in, you need to configure Firebase in your project. Please refer to docs/FIREBASE_SETUP.md for detailed instructions.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),
