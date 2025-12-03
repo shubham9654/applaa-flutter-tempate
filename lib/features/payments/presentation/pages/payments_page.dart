@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' as stripe;
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/config/app_config.dart';
-import '../../../../core/widgets/auth_required_widget.dart';
 import '../../../../core/widgets/setup_warning_widget.dart';
 import '../../../../core/utils/setup_checker.dart';
 import '../bloc/payments_bloc.dart';
@@ -61,35 +60,25 @@ class _PaymentsPageState extends State<PaymentsPage> {
   @override
   Widget build(BuildContext context) {
     // Check if user is authenticated
+    bool isAuthenticated = false;
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        // Show sign-in prompt for guest users
-        return const AuthRequiredWidget(
-          title: 'Sign In Required',
-          message: 'Please sign in to make payments and manage your payment methods.',
-          icon: Icons.payment_outlined,
-        );
-      }
+      isAuthenticated = FirebaseAuth.instance.currentUser != null;
     } catch (e) {
-      // Firebase not initialized, show sign-in prompt
-      return const AuthRequiredWidget(
-        title: 'Sign In Required',
-        message: 'Please sign in to make payments and manage your payment methods.',
-        icon: Icons.payment_outlined,
-      );
+      isAuthenticated = false;
     }
 
     // Check if PaymentsBloc is available
+    bool hasPaymentsBloc = false;
     try {
       context.read<PaymentsBloc>();
+      hasPaymentsBloc = true;
     } catch (e) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Payments')),
-        body: const Center(
-          child: Text('Payments feature is not available.'),
-        ),
-      );
+      hasPaymentsBloc = false;
+    }
+
+    // If not authenticated or no bloc, show demo UI
+    if (!isAuthenticated || !hasPaymentsBloc) {
+      return _buildDemoPaymentsUI(context);
     }
 
     return Scaffold(
@@ -266,5 +255,257 @@ class _PaymentsPageState extends State<PaymentsPage> {
         );
       }
     }
+  }
+
+  Widget _buildDemoPaymentsUI(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('Payments'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: const Color(0xFF1E293B),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Payment Methods Section
+            const Text(
+              'Payment Methods',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF6C5CE7), Color(0xFF818CF8)],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'VISA',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'Primary',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 32),
+                  const Text(
+                    '•••• •••• •••• 4242',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'CARDHOLDER',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 10,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'John Doe',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'EXPIRES',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.7),
+                              fontSize: 10,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            '12/25',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            // Add Payment Method Button
+            OutlinedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.add),
+              label: const Text('Add Payment Method'),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                side: const BorderSide(color: Color(0xFF6C5CE7)),
+                foregroundColor: const Color(0xFF6C5CE7),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Recent Transactions
+            const Text(
+              'Recent Transactions',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildTransactionItem(
+              title: 'Premium Subscription',
+              date: 'Dec 15, 2024',
+              amount: '\$9.99',
+              isPositive: false,
+            ),
+            const SizedBox(height: 12),
+            _buildTransactionItem(
+              title: 'Payment Received',
+              date: 'Dec 10, 2024',
+              amount: '\$49.99',
+              isPositive: true,
+            ),
+            const SizedBox(height: 12),
+            _buildTransactionItem(
+              title: 'App Purchase',
+              date: 'Dec 5, 2024',
+              amount: '\$4.99',
+              isPositive: false,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionItem({
+    required String title,
+    required String date,
+    required String amount,
+    required bool isPositive,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: (isPositive ? Colors.green : Colors.red).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              isPositive ? Icons.arrow_downward : Icons.arrow_upward,
+              color: isPositive ? Colors.green : Colors.red,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Text(
+            amount,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: isPositive ? Colors.green : Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

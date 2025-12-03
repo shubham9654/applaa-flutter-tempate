@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../../core/widgets/auth_required_widget.dart';
 import '../bloc/profile_bloc.dart';
 import '../../domain/entities/profile_entity.dart';
 
@@ -89,36 +88,27 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     // Check if user is authenticated
+    User? user;
+    bool isAuthenticated = false;
     try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        // Show sign-in prompt for guest users
-        return const AuthRequiredWidget(
-          title: 'Sign In Required',
-          message: 'Please sign in to access your profile and manage your account settings.',
-          icon: Icons.person_outline,
-        );
-      }
+      user = FirebaseAuth.instance.currentUser;
+      isAuthenticated = user != null;
     } catch (e) {
-      // Firebase not initialized, show sign-in prompt
-      return const AuthRequiredWidget(
-        title: 'Sign In Required',
-        message: 'Please sign in to access your profile and manage your account settings.',
-        icon: Icons.person_outline,
-      );
+      isAuthenticated = false;
     }
 
     // Check if ProfileBloc is available
+    bool hasProfileBloc = false;
     try {
       context.read<ProfileBloc>();
+      hasProfileBloc = true;
     } catch (e) {
-      // ProfileBloc not available, show message
-      return Scaffold(
-        appBar: AppBar(title: const Text('Profile')),
-        body: const Center(
-          child: Text('Profile features require Firebase authentication.'),
-        ),
-      );
+      hasProfileBloc = false;
+    }
+
+    // If not authenticated, show demo UI
+    if (!isAuthenticated || !hasProfileBloc) {
+      return _buildDemoProfileUI(context);
     }
 
     return Scaffold(
@@ -273,6 +263,178 @@ class _ProfilePageState extends State<ProfilePage> {
 
           return const SizedBox.shrink();
         },
+      ),
+    );
+  }
+
+  Widget _buildDemoProfileUI(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: const Color(0xFF1E293B),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            // Profile Avatar
+            Stack(
+              children: [
+                CircleAvatar(
+                  radius: 60,
+                  backgroundColor: const Color(0xFF6C5CE7),
+                  child: const Text(
+                    'JD',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6C5CE7),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                    ),
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'John Doe',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'john.doe@example.com',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 32),
+            // Profile Fields
+            _buildProfileField(
+              label: 'Full Name',
+              value: 'John Doe',
+              icon: Icons.person_outline,
+            ),
+            const SizedBox(height: 16),
+            _buildProfileField(
+              label: 'Email',
+              value: 'john.doe@example.com',
+              icon: Icons.email_outlined,
+            ),
+            const SizedBox(height: 16),
+            _buildProfileField(
+              label: 'Phone Number',
+              value: '+1 (555) 123-4567',
+              icon: Icons.phone_outlined,
+            ),
+            const SizedBox(height: 16),
+            _buildProfileField(
+              label: 'Bio',
+              value: 'Software developer passionate about creating amazing apps.',
+              icon: Icons.description_outlined,
+              maxLines: 3,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {},
+              icon: const Icon(Icons.edit),
+              label: const Text('Edit Profile'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C5CE7),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfileField({
+    required String label,
+    required String value,
+    required IconData icon,
+    int maxLines = 1,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey[200]!),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFF6C5CE7).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: const Color(0xFF6C5CE7),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[500],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF1E293B),
+                  ),
+                  maxLines: maxLines,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

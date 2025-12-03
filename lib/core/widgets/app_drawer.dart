@@ -418,8 +418,49 @@ class AppDrawer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  // Logout Button
-                  if (isAuthenticated)
+                  // Auth Buttons
+                  if (!isAuthenticated) ...[
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.push(AppConstants.loginRoute);
+                        },
+                        icon: const Icon(Icons.login, size: 18),
+                        label: const Text('Sign In'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF6C5CE7),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.push(AppConstants.signupRoute);
+                        },
+                        icon: const Icon(Icons.person_add, size: 18),
+                        label: const Text('Sign Up'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF6C5CE7),
+                          side: const BorderSide(color: Color(0xFF6C5CE7)),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    // Logout Button
                     TextButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
@@ -434,6 +475,7 @@ class AppDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ],
                 ],
               ),
             ),

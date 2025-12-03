@@ -8,6 +8,8 @@ class AppConstants {
   static const String settingsRoute = '/settings';
   static const String paymentsRoute = '/payments';
   static const String dashboardRoute = '/dashboard';
+  static const String termsRoute = '/terms';
+  static const String privacyRoute = '/privacy';
   
   // Storage Keys
   static const String themeKey = 'theme_mode';

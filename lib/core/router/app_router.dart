@@ -10,6 +10,8 @@ import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/payments/presentation/pages/payments_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_page.dart';
+import '../../features/legal/presentation/pages/terms_page.dart';
+import '../../features/legal/presentation/pages/privacy_page.dart';
 import '../constants/app_constants.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -54,6 +56,16 @@ final GoRouter appRouter = GoRouter(
       path: AppConstants.signupRoute,
       name: 'signup',
       builder: (context, state) => const SignupPage(),
+    ),
+    GoRoute(
+      path: AppConstants.termsRoute,
+      name: 'terms',
+      builder: (context, state) => const TermsPage(),
+    ),
+    GoRoute(
+      path: AppConstants.privacyRoute,
+      name: 'privacy',
+      builder: (context, state) => const PrivacyPage(),
     ),
     ShellRoute(
       navigatorKey: _shellNavigatorKey,
