@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_it/get_it.dart';
+import 'dart:ui';
 import '../bloc/settings_bloc.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../../../core/router/app_router.dart';
@@ -14,9 +15,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-      ),
+      backgroundColor: Colors.grey[50],
       body: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
           if (state is SettingsLoading) {
@@ -46,262 +45,635 @@ class SettingsPage extends StatelessWidget {
             
             // Check if user is authenticated
             bool isAuthenticated = false;
+            User? currentUser;
             try {
-              isAuthenticated = FirebaseAuth.instance.currentUser != null;
+              currentUser = FirebaseAuth.instance.currentUser;
+              isAuthenticated = currentUser != null;
             } catch (e) {
               isAuthenticated = false;
             }
 
-            return ListView(
-              padding: const EdgeInsets.all(16.0),
-              children: [
-                // Sign In Section (for guest users)
-                if (!isAuthenticated) ...[
-                  Card(
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.account_circle_outlined,
-                            size: 48,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Sign In to Access More Features',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Sign in to access your profile, make payments, and sync your data.',
-                            style: Theme.of(context).textTheme.bodySmall,
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: OutlinedButton.icon(
-                                  onPressed: () {
-                                    context.push(AppConstants.loginRoute);
-                                  },
-                                  icon: const Icon(Icons.login),
-                                  label: const Text('Sign In'),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    context.push(AppConstants.signupRoute);
-                                  },
-                                  icon: const Icon(Icons.person_add),
-                                  label: const Text('Sign Up'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+            return CustomScrollView(
+              slivers: [
+                // Sticky Header
+                SliverAppBar(
+                  floating: true,
+                  pinned: true,
+                  backgroundColor: Colors.grey[50]!.withOpacity(0.9),
+                  elevation: 0,
+                  flexibleSpace: ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      child: Container(
+                        color: Colors.grey[50]!.withOpacity(0.9),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                ],
-                
-                // Account Section (only for authenticated users)
-                if (isAuthenticated) ...[
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child: Text(
-                      'Account',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Card(
-                    child: ListTile(
-                      title: const Text('Profile'),
-                      subtitle: const Text('Manage your profile information'),
-                      leading: const Icon(Icons.person),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        context.push(AppConstants.profileRoute);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // Payments Section
-                  Card(
-                    child: ListTile(
-                      title: const Text('Payments'),
-                      subtitle: const Text('Manage payment methods and transactions'),
-                      leading: const Icon(Icons.payment),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        context.push(AppConstants.paymentsRoute);
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
-                
-                // App Settings Section
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
-                  child: Text(
-                    'Preferences',
+                  title: const Text(
+                    'Settings',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey,
+                      color: Color(0xFF1E293B),
                     ),
                   ),
-                ),
-                Card(
-                  child: SwitchListTile(
-                    title: const Text('Dark Mode'),
-                    subtitle: const Text('Toggle dark theme'),
-                    value: settings.isDarkMode,
-                    onChanged: (value) {
-                      context.read<SettingsBloc>().add(const ToggleTheme());
-                    },
-                    secondary: const Icon(Icons.dark_mode),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Card(
-                  child: SwitchListTile(
-                    title: const Text('Notifications'),
-                    subtitle: const Text('Enable push notifications'),
-                    value: settings.notificationsEnabled,
-                    onChanged: (value) {
-                      context.read<SettingsBloc>().add(
-                            const ToggleNotifications(),
-                          );
-                    },
-                    secondary: const Icon(Icons.notifications),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Card(
-                  child: ListTile(
-                    title: const Text('Language'),
-                    subtitle: Text(settings.language.toUpperCase()),
-                    leading: const Icon(Icons.language),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      // Show language selection dialog
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: const Text('Select Language'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              ListTile(
-                                title: const Text('English'),
-                                onTap: () {
-                                  context.read<SettingsBloc>().add(
-                                        const ChangeLanguage('en'),
-                                      );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ListTile(
-                                title: const Text('Spanish'),
-                                onTap: () {
-                                  context.read<SettingsBloc>().add(
-                                        const ChangeLanguage('es'),
-                                      );
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          ),
+                  actions: [
+                    IconButton(
+                      icon: Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                      );
-                    },
-                  ),
+                        child: Icon(
+                          Icons.search,
+                          color: Colors.grey[600],
+                          size: 20,
+                        ),
+                      ),
+                      onPressed: () {},
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                
-                // Sign Out Section (only for authenticated users)
-                if (isAuthenticated)
-                  Card(
-                    child: ListTile(
-                      title: const Text('Sign Out'),
-                      leading: const Icon(Icons.logout, color: Colors.red),
-                      textColor: Colors.red,
-                      iconColor: Colors.red,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: const Text('Sign Out'),
-                            content: const Text('Are you sure you want to sign out?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  
-                                  // Check if AuthBloc is available
-                                  if (!GetIt.instance.isRegistered<AuthBloc>()) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Firebase authentication is not configured. You are already signed out as a guest.'),
-                                        backgroundColor: Colors.orange,
-                                        duration: Duration(seconds: 3),
-                                      ),
-                                    );
-                                    return;
-                                  }
-
-                                  try {
-                                    context.read<AuthBloc>().add(const SignOutRequested());
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Signed out successfully'),
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    );
-                                    appRouter.go(AppConstants.homeRoute);
-                                  } catch (e) {
-                                    debugPrint('Sign out error: $e');
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('Error signing out: ${e.toString()}'),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: const Text('Sign Out'),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate(
+                      _buildSettingsList(context, isAuthenticated, currentUser, settings),
                     ),
                   ),
+                ),
               ],
             );
           }
 
           return const SizedBox.shrink();
         },
+      ),
+    );
+  }
+
+  List<Widget> _buildSettingsList(
+    BuildContext context,
+    bool isAuthenticated,
+    User? currentUser,
+    dynamic settings,
+  ) {
+    final List<Widget> items = [];
+    
+    // Profile Card
+    if (isAuthenticated) {
+      items.add(
+        Container(
+                          margin: const EdgeInsets.only(bottom: 32),
+                          child: Row(
+                            children: [
+                              Stack(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 32,
+                                    backgroundColor: Colors.white,
+                                    child: CircleAvatar(
+                                      radius: 30,
+                                      backgroundImage: currentUser?.photoURL != null
+                                          ? NetworkImage(currentUser!.photoURL!)
+                                          : null,
+                                      ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: Container(
+                                      width: 20,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF6C5CE7),
+                                        shape: BoxShape.circle,
+                                        border: Border.all(color: Colors.white, width: 2),
+                                      ),
+                                      child: const Icon(
+                                        Icons.check,
+                                        size: 10,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      currentUser?.displayName ?? 'User',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF1E293B),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      currentUser?.email ?? 'user@applaa.ui',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context.push(AppConstants.profileRoute);
+                                },
+                                child: const Text(
+                                  'Edit',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Color(0xFF6C5CE7),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+      );
+    }
+    
+    // Premium Banner (if authenticated)
+    if (isAuthenticated) {
+      items.add(
+        Container(
+                          margin: const EdgeInsets.only(bottom: 32),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFF6C5CE7), Color(0xFF818CF8)],
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF6C5CE7).withOpacity(0.3),
+                                blurRadius: 20,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                right: -24,
+                                top: -24,
+                                child: Container(
+                                  width: 96,
+                                  height: 96,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: -24,
+                                bottom: -24,
+                                child: Container(
+                                  width: 96,
+                                  height: 96,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                              // Premium content can be added here
+                            ],
+                          ),
+                        ),
+      );
+    }
+    
+    // Account Section
+    if (isAuthenticated) {
+      items.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12, left: 4),
+          child: Text(
+            'ACCOUNT',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey[400],
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+      );
+      items.add(
+        Container(
+          margin: const EdgeInsets.only(bottom: 24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey[100]!),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.person_outline,
+                iconColor: const Color(0xFF6C5CE7),
+                title: 'Personal Information',
+                onTap: () {
+                  context.push(AppConstants.profileRoute);
+                },
+                showDivider: true,
+              ),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.shield_outlined,
+                iconColor: const Color(0xFF6C5CE7),
+                title: 'Security & Login',
+                onTap: () {},
+                showDivider: true,
+              ),
+              _buildSettingsItem(
+                context: context,
+                icon: Icons.credit_card_outlined,
+                iconColor: const Color(0xFF6C5CE7),
+                title: 'Payments & Billing',
+                onTap: () {
+                  context.push(AppConstants.paymentsRoute);
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    // Preferences Section
+    items.add(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 12, left: 4),
+        child: Text(
+          'PREFERENCES',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[400],
+            letterSpacing: 1.2,
+          ),
+        ),
+      ),
+    );
+    items.add(
+      Container(
+                        margin: const EdgeInsets.only(bottom: 24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey[100]!),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _buildSettingsItemWithToggle(
+                              icon: Icons.notifications_outlined,
+                              iconColor: Colors.orange[500]!,
+                              title: 'Push Notifications',
+                              value: settings.notificationsEnabled,
+                              onChanged: (value) {
+                                context.read<SettingsBloc>().add(
+                                      const ToggleNotifications(),
+                                    );
+                              },
+                              showDivider: true,
+                            ),
+                            _buildSettingsItemWithToggle(
+                              icon: Icons.dark_mode_outlined,
+                              iconColor: Colors.grey[600]!,
+                              title: 'Dark Mode',
+                              value: settings.isDarkMode,
+                              onChanged: (value) {
+                                context.read<SettingsBloc>().add(
+                                      const ToggleTheme(),
+                                    );
+                              },
+                              showDivider: true,
+                            ),
+                            _buildSettingsItem(
+                              context: context,
+                              icon: Icons.language_outlined,
+                              iconColor: Colors.blue[500]!,
+                              title: 'Language',
+                              subtitle: 'English (US)',
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text('Select Language'),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ListTile(
+                                          title: const Text('English'),
+                                          onTap: () {
+                                            context.read<SettingsBloc>().add(
+                                                  const ChangeLanguage('en'),
+                                                );
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('Spanish'),
+                                          onTap: () {
+                                            context.read<SettingsBloc>().add(
+                                                  const ChangeLanguage('es'),
+                                                );
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+    );
+    
+    // Support Section
+    items.add(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 12, left: 4),
+        child: Text(
+          'SUPPORT',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[400],
+            letterSpacing: 1.2,
+          ),
+        ),
+      ),
+    );
+    items.add(
+      Container(
+                        margin: const EdgeInsets.only(bottom: 24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey[100]!),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _buildSettingsItem(
+                              context: context,
+                              icon: Icons.help_outline,
+                              iconColor: Colors.green[600]!,
+                              title: 'Help Center',
+                              onTap: () {},
+                              showDivider: true,
+                            ),
+                            _buildSettingsItem(
+                              context: context,
+                              icon: Icons.description_outlined,
+                              iconColor: Colors.purple[500]!,
+                              title: 'Terms & Privacy',
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+                      ),
+    );
+    
+    // Logout Button
+    if (isAuthenticated) {
+      items.add(
+        Container(
+                          margin: const EdgeInsets.only(bottom: 32),
+                          width: double.infinity,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.red[100]!),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.02),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Sign Out'),
+                                  content: const Text('Are you sure you want to sign out?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        if (!GetIt.instance.isRegistered<AuthBloc>()) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Firebase authentication is not configured.'),
+                                              backgroundColor: Colors.orange,
+                                            ),
+                                          );
+                                          return;
+                                        }
+                                        try {
+                                          context.read<AuthBloc>().add(const SignOutRequested());
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text('Signed out successfully'),
+                                              backgroundColor: Colors.green,
+                                            ),
+                                          );
+                                          appRouter.go(AppConstants.homeRoute);
+                                        } catch (e) {
+                                          debugPrint('Sign out error: $e');
+                                        }
+                                      },
+                                      child: const Text('Sign Out'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.logout, color: Colors.red),
+                            label: const Text(
+                              'Log Out',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+      );
+    }
+    
+    return items;
+  }
+
+  Widget _buildSettingsItem({
+    required BuildContext context,
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+    bool showDivider = false,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          border: showDivider
+              ? Border(
+                  bottom: BorderSide(color: Colors.grey[50]!),
+                )
+              : null,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(9),
+              ),
+              child: Icon(icon, color: iconColor, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF1E293B),
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: Colors.grey[300],
+              size: 16,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsItemWithToggle({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    bool showDivider = false,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: showDivider
+            ? Border(
+                bottom: BorderSide(color: Colors.grey[50]!),
+              )
+            : null,
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(icon, color: iconColor, size: 18),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Color(0xFF1E293B),
+              ),
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: const Color(0xFF6C5CE7),
+          ),
+        ],
       ),
     );
   }
