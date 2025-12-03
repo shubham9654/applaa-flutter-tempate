@@ -5,6 +5,8 @@ import 'package:get_it/get_it.dart';
 import 'dart:ui';
 import '../bloc/auth_bloc.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/services/remote_config_service.dart';
+import '../../../../core/widgets/remote_config_auth_wrapper.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

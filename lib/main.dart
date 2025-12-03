@@ -10,6 +10,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/services/notification_service.dart';
 import 'core/services/admob_service.dart';
+import 'core/services/remote_config_service.dart';
 import 'core/config/app_config.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
@@ -25,6 +26,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase only if options are available
+  bool firebaseInitialized = false;
   try {
     // Check if Firebase is configured (has options)
     // On web, Firebase needs to be configured via index.html
@@ -33,6 +35,7 @@ void main() async {
       // If not configured, skip initialization
       try {
         await Firebase.initializeApp();
+        firebaseInitialized = true;
       } catch (e) {
         debugPrint('Firebase not configured for web: $e');
         debugPrint('Continuing without Firebase...');
@@ -40,11 +43,25 @@ void main() async {
     } else {
       // For mobile platforms, try to initialize
       await Firebase.initializeApp();
+      firebaseInitialized = true;
     }
   } catch (e) {
     debugPrint('Firebase initialization error: $e');
     debugPrint('Continuing without Firebase...');
     // Continue without Firebase if initialization fails
+  }
+
+  // Initialize Firebase Remote Config after Firebase is initialized
+  if (firebaseInitialized) {
+    try {
+      await RemoteConfigService().initialize();
+      // Activate real-time config updates
+      await RemoteConfigService().activateConfigUpdates();
+      debugPrint('Remote Config initialized successfully');
+    } catch (e) {
+      debugPrint('Remote Config initialization error: $e');
+      debugPrint('Continuing with default values...');
+    }
   }
 
   try {
