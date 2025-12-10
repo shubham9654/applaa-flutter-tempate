@@ -107,7 +107,7 @@ Firebase Remote Config has been successfully integrated into your Applaa Flutter
 5. **AdMob** (4 params)
 6. **UI Customization** (3 params)
 
-See `docs/FIREBASE_REMOTE_CONFIG_SETUP.md` for complete list.
+See `FIREBASE_REMOTE_CONFIG_SETUP.md` for complete list.
 
 ## 🚀 How to Use
 
@@ -245,7 +245,8 @@ RemoteConfigService().onConfigUpdated.listen((update) {
 
 ## 📚 Resources
 
-- [Setup Guide](docs/FIREBASE_REMOTE_CONFIG_SETUP.md)
+- [Setup Guide](FIREBASE_REMOTE_CONFIG_SETUP.md)
+- [Quick Start Guide](QUICK_START_REMOTE_CONFIG.md)
 - [Firebase Docs](https://firebase.google.com/docs/remote-config)
 - [FlutterFire Plugin](https://firebase.flutter.dev/docs/remote-config/overview/)
 

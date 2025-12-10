@@ -177,7 +177,7 @@ MaintenanceModeWidget(
 ## Firebase Console
 
 1. Go to Firebase Console → Remote Config
-2. Add parameters (see docs/FIREBASE_REMOTE_CONFIG_SETUP.md)
+2. Add parameters (see FIREBASE_REMOTE_CONFIG_SETUP.md)
 3. Set values
 4. Click "Publish changes"
 5. App will fetch on next launch
@@ -202,5 +202,5 @@ App will work even if Remote Config fetch fails.
 
 ## Need Help?
 
-See full documentation: `docs/FIREBASE_REMOTE_CONFIG_SETUP.md`
+See full documentation: `FIREBASE_REMOTE_CONFIG_SETUP.md`
 
