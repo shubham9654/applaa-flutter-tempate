@@ -90,7 +90,7 @@ See `.env.example` for all available configuration options.
 
 ```bash
 # Build and start the container
-docker-compose up --build
+docker-compose -f docker/docker-compose.yml up --build
 
 # Run in detached mode
 docker-compose up -d
@@ -307,6 +307,10 @@ docker run -p 8080:80 applaa-flutter-app
 ├── .env                  # Your actual environment variables (not in git)
 ├── Dockerfile            # Docker build configuration (includes nginx config)
 ├── docker-compose.yml    # Docker Compose configuration
+├── scripts/              # Utility scripts
+│   ├── build-and-push-docker.bat
+│   ├── build-and-push-docker.sh
+│   └── check-docker-installation.bat
 ├── docs/                 # Documentation files
 │   ├── STRIPE.md         # Stripe setup and troubleshooting guide
 │   ├── FIREBASE_SETUP.md # Firebase setup guide

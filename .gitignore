@@ -43,38 +43,65 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Firebase
-google-services.json
-GoogleService-Info.plist
-firebase_options.dart
+# iOS/XCode
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
 
-# Environment variables
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Coverage
+coverage/
+
+# Exceptions to above rules.
+!/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+!/dev/ci/**/Gemfile.lock
+
+# Environment files
 .env
 .env.local
+.env.*.local
 
-# Configuration files with sensitive data
-**/config/secrets.dart
+# Firebase
+**/google-services.json
+**/GoogleService-Info.plist
 
-# Windows reserved device names (should never be committed)
-nul
-CON
-PRN
-AUX
-COM1
-COM2
-COM3
-COM4
-COM5
-COM6
-COM7
-COM8
-COM9
-LPT1
-LPT2
-LPT3
-LPT4
-LPT5
-LPT6
-LPT7
-LPT8
-LPT9
+# Design files (if large)
+designs/*.psd
+designs/*.sketch
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Build outputs
+build/
+dist/
+out/
